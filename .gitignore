@@ -57,6 +57,7 @@ node_modules/methods/LICENSE
 node_modules/mime-types/LICENSE
 node_modules/mime/LICENSE
 node_modules/mime/.npmignore
+node_modules/morgan/LICENSE
 node_modules/negotiator/LICENSE
 node_modules/object-inspect/.eslintrc
 node_modules/object-inspect/.nycrc
