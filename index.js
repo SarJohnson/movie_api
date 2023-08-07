@@ -124,7 +124,7 @@ let movies= [
         "Description":"After floating in space for 57 years, Lt. Ripley's shuttle is found by a deep space salvage team. Upon arriving at LV-426, the marines find only one survivor, a nine year old girl named Newt. But even these battle-hardened marines with all the latest weaponry are no match for the hundreds of aliens that have invaded the colony.",
         "Subgenre": {
             "Name":"Science Fiction",
-            "Description":"Sci-fi horror films combine terror with science, usually deaturing futuristic threats or alien species."
+            "Description":"Sci-fi horror films combine terror with science, usually featuring futuristic threats or alien species."
         },
         "Director": {
             "Name":"James Cameron",
