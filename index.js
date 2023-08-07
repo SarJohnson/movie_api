@@ -139,8 +139,20 @@ let movies= [
             "Description":"Found footage horror films are a type of film style typically with one character filming, these films tend to have grainy images and shaky cameras."
         },
         "Director": {
-            "Name":"Eduardo Sanchez and Daniel Myrick",
-            "Birth":"1968/1963"
+            "Name":"Eduardo Sanchez",
+            "Birth":"1968"
+        }
+    },
+    {
+        "Title":"Paranormal Activity",
+        "Description":"Soon after moving into a suburban tract home, Katie and Micah become increasingly disturbed by what appears to be a supernatural presence. Hoping to capture evidence of it on film, they set up video cameras in the house but are not prepared for the terrifying events that follow.",
+        "Subgenre": {
+            "Name":"Found Footage",
+            "Description":"Found footage horror films are a type of film style typically with one character filming, these films tend to have grainy images and shaky cameras."
+        },
+        "Director":{
+            "Name": "Oren Peli",
+            "Birth":"1970"
         }
     },
 ];
