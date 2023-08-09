@@ -31,13 +31,13 @@
     </ul>
     <ul> <h4>Allows a user to update their username</h4>
         <li>
-            Endpoint URL: /users/:id
+            Endpoint URL: /users/:Username
         </li>
         <li>
             Method type: PUT
         </li>
         <li>
-            Query parameters: :id
+            Query parameters: :Username
         </li>
         <li>
             Format of request data: N/A
@@ -48,13 +48,13 @@
     </ul>
     <ul> <h4>Allows a user to favorite a movie</h4>
         <li>
-            Endpoint URL: /users/:id/:movieTitle
+            Endpoint URL: /users/:Username/movies/:MovieID
         </li>
         <li>
             Method type: POST
         </li>
         <li>
-            Query parameters: :id, :movieTitle
+            Query parameters: :Username, :MovieID
         </li>
         <li>
             Format of request data: N/A
@@ -65,13 +65,13 @@
     </ul>
     <ul> <h4>Allows a user to remove a favorited movie</h4>
         <li>
-            Endpoint URL: /users/:id/:movieTitle
+            Endpoint URL: /users/:Username/Movies/:MovieID
         </li>
         <li>
             Method type: DELETE
         </li>
         <li>
-            Query parameters: :id, :movieTitle
+            Query parameters: :Username, :MovieID
         </li>
         <li>
             Format of request data: N/A
@@ -82,13 +82,13 @@
     </ul>
     <ul> <h4>Allows a user to be deleted</h4>
         <li>
-            Endpoint URL: /users/:id
+            Endpoint URL: /users/:Username
         </li>
         <li>
             Method type: DELETE
         </li>
         <li>
-            Query parameters: :id
+            Query parameters: :Username
         </li>
         <li>
             Format of request data: N/A
@@ -116,13 +116,13 @@
     </ul>
     <ul> <h4>Shows a specific movie</h4>
         <li>
-            Endpoint URL: /movies/:title
+            Endpoint URL: /movies/:Title
         </li>
         <li>
             Method type: GET
         </li>
         <li>
-            Query parameters: :title
+            Query parameters: :Title
         </li>
         <li>
             Format of request data: N/A
@@ -133,13 +133,13 @@
     </ul>
     <ul> <h4>Shows a specific horror subgenre</h4>
         <li>
-            Endpoint URL: /movies/subgenre/:subgenreName
+            Endpoint URL: /movies/subgenre/:Name
         </li>
         <li>
             Method type: GET
         </li>
         <li>
-            Query parameters: :subgenreName
+            Query parameters: :Name
         </li>
         <li>
             Format of request data: N/A
@@ -150,13 +150,13 @@
     </ul>
     <ul> <h4>Shows a specific director</h4>
         <li>
-            Endpoint URL: /movies/directors/:directorName
+            Endpoint URL: /director/:Name
         </li>
         <li>
             Method type: GET
         </li>
         <li>
-            Query parameters: :directorName
+            Query parameters: :Name
         </li>
         <li>
             Format of request data: N/A
