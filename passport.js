@@ -7,7 +7,7 @@ let Users = Models.User,
     JWTStrategy = passportJWT.Strategy,
     ExtractJWT = passportJWT.ExtractJwt;
 
-passport.user(
+passport.use(
     new LocalStrategy(
         {
             usernameField: 'Username',
@@ -36,7 +36,7 @@ passport.user(
     )
 );
 
-passport.user(new JWTStrategy({
+passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: 'your_jwt_secret'
 }, async (jwtPayload, callback) => {

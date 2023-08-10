@@ -174,11 +174,18 @@ app.use(morgan('common'));
 
 app.use(bodyParser.json());
 
+app.use(bodyParser.urlencoded({ extended: true }));
+
+let auth = require('./auth.js')(app);
+
+const passport = require('passport');
+require('./passport.js');
+
 app.get('/', (req, res) => {
     res.send('Welcome to my movie app!');
 });
 
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
         .then((movies) => {
             res.status(201).json(movies);
@@ -189,7 +196,7 @@ app.get('/movies', (req, res) => {
         });
 });
 
-app.get('/users', function (req, res) {
+app.get('/users', passport.authenticate('jwt', { session: false }), function (req, res) {
     Users.find()
      .then(function (users) {
         res.status(201).json(users);
@@ -200,7 +207,7 @@ app.get('/users', function (req, res) {
      });
 });
 
-app.get('/movies/:Title', (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.findOne({ Title: req.params.Title })
         .then((movie) => {
             res.json(movie);
@@ -211,7 +218,7 @@ app.get('/movies/:Title', (req, res) => {
         });
 });
 
-app.get('/movies/subgenre/:Name', (req, res) => {
+app.get('/movies/subgenre/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
     Subgenres.findOne({ Name: req.params.Name })
         .then((subgenre) => {
             res.json(subgenre.Description);
@@ -222,7 +229,7 @@ app.get('/movies/subgenre/:Name', (req, res) => {
         });
 });
 
-app.get('/director/:Name', (req, res) => {
+app.get('/director/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
     Directors.findOne({ Name: req.params.Name })
         .then((director) => {
             res.json(director);
@@ -233,7 +240,7 @@ app.get('/director/:Name', (req, res) => {
         });
 });
 
-app.get('/users/:Username', async (req, res) => {
+app.get('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     await Users.findOne({ Username: req.params.Username })
         .then((user) => {
             res.json(user);
@@ -270,7 +277,10 @@ app.post('/users', (req, res) => {
         });
 });
 
-app.put('/users/:Username', (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+    if(req.user.Username !== req.params.Username){
+        return res.status(400).send('Permission denied');
+    }
     Users.findOneAndUpdate(
         { Username: req.params.Username }, 
         { 
@@ -292,7 +302,10 @@ app.put('/users/:Username', (req, res) => {
   });
 });
 
-app.post('/users/:Username/Movies/:MovieID', async (req, res) => {
+app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    if(req.user.Username !== req.params.Username){
+        return res.status(400).send('Permission denied');
+    }
     await Users.findOneAndUpdate({ Username: req.params.Username }, {
         $push: { FavoriteMovies: req.params.MovieID }
     },
@@ -306,7 +319,10 @@ app.post('/users/:Username/Movies/:MovieID', async (req, res) => {
     });
 });
 
-app.delete('/users/:Username', (req, res) => {
+app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+    if(req.user.Username !== req.params.Username){
+        return res.status(400).send('Permission denied');
+    }
     Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
         if (!user) {
@@ -321,7 +337,10 @@ app.delete('/users/:Username', (req, res) => {
     });
 });
 
-app.delete('/users/:Username/Movies/:MovieID', (req, res) => {
+app.delete('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
+    if(req.user.Username !== req.params.Username){
+        return res.status(400).send('Permission denied');
+    }
     Users.findOneAndUpdate(
         { Username: req.params.Username },
         { $pull: { FavoriteMovies: req.params.MovieID} },
