@@ -378,6 +378,6 @@ app.use((err, req, res, next) => {
 });
 
 const port = process.env.PORT || 8080;
-app.listen(prot, '0.0.0.0', () => {
+app.listen(port, '0.0.0.0', () => {
     console.log('Your app is listening on port ' + port);
 });
