@@ -170,6 +170,11 @@ let movies= [
     },
 ]; */
 
+const cors = require('cors');
+app.use(cors());
+
+const { check, validationResult } = require('express-validator');
+
 app.use(morgan('common'));
 
 app.use(bodyParser.json());
@@ -250,7 +255,16 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), as
         });
 });
 
-app.post('/users', (req, res) => {
+app.post('/users', 
+[check('Username', 'Username is required').isLength({min: 5}),
+check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+check('Password', 'Password is required').not().isEmpty(),
+check('Email', 'Email does not appear to be valid').isEmail()], (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+    let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOne({ Username: req.body.Username})
         .then((user) => {
             if (user) {
@@ -363,6 +377,7 @@ app.use((err, req, res, next) => {
     res.status(500).send('Error');
 });
 
-app.listen(8080, () => {
-    console.log('Your app is listening on port 8080.');
+const port = process.env.PORT || 8080;
+app.listen(prot, '0.0.0.0', () => {
+    console.log('Your app is listening on port ' + port);
 });
