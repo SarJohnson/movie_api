@@ -6,11 +6,10 @@ const morgan = require('morgan');
 const app = express();
 const mongoose = require('mongoose');
 const Models = require('./models.js');
+const { check, validationResult } = require('express-validator');
 
 const Movies = Models.Movie;
 const Users = Models.User;
-const Subgenres = Models.Subgenre;
-const Directors = Models.Director;
 
 /* mongoose.connect('mongodb://localhost:27017/cfDB', {
      useNewUrlParser: true, 
@@ -178,9 +177,11 @@ let movies= [
 const cors = require('cors');
 app.use(cors());
 
-const { check, validationResult } = require('express-validator');
-
 app.use(morgan('common'));
+
+app.use(express.static('public'));
+
+app.use(express.json());
 
 app.use(bodyParser.json());
 
@@ -229,9 +230,13 @@ app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req
 });
 
 app.get('/movies/subgenre/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Subgenres.findOne({ Name: req.params.Name })
-        .then((subgenre) => {
-            res.json(subgenre.Description);
+    Movies.findOne({ 'Subgenre.Name': req.params.Name })
+        .then((movie) => {
+            if (!movie) {
+                return res.status(404).send('Error: ' + req.params.Name + ' was not found');
+            } else {
+                res.status(200).json(movie.Subgenre.Description);
+            }
         })
         .catch((err) => {
             console.error(err);
@@ -239,22 +244,16 @@ app.get('/movies/subgenre/:Name', passport.authenticate('jwt', { session: false 
         });
 });
 
-app.get('/director/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Directors.findOne({ Name: req.params.Name })
-        .then((director) => {
-            res.json(director);
+app.get('movies/director/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Movies.findOne({ 'Director.Name': req.params.Name })
+        .then((movie) => {
+            if (!movie) {
+                return res.status(404).send('Error: ' + req.params.Name + ' was not found');
+            } else {
+                res.status(200).json(movie.Name);
+            }
         })
         .catch((err) => {
-            console.error(err);
-            res.status(500).send('Error: ' + err);
-        });
-});
-
-app.get('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Users.findOne({ Username: req.params.Username })
-        .then((user) => {
-            res.json(user);
-        }).catch((err) => {
             console.error(err);
             res.status(500).send('Error: ' + err);
         });
@@ -297,9 +296,6 @@ check('Email', 'Email does not appear to be valid').isEmail()], (req, res) => {
 });
 
 app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
-    if(req.user.Username !== req.params.Username){
-        return res.status(400).send('Permission denied');
-    }
     Users.findOneAndUpdate(
         { Username: req.params.Username }, 
         { 
@@ -311,26 +307,31 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (r
         },
         },
   { new: true},
-  (err, updatedUser) => {
-    if (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
+    )
+  .then((user) => {
+    if (!user) {
+        return res.status(404).send('Error: No user was found');
     } else {
-        res.json(updatedUser);
+        res.json(user);
     }
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
   });
 });
 
-app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    if(req.user.Username !== req.params.Username){
-        return res.status(400).send('Permission denied');
-    }
-    await Users.findOneAndUpdate({ Username: req.params.Username }, {
-        $push: { FavoriteMovies: req.params.MovieID }
+app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Users.findOneAndUpdate({ Username: req.params.Username }, {
+        $addtoSet: { FavoriteMovies: req.params.MovieID }
     },
     { new: true })
     .then((updatedUser) => {
+        if (!updatedUser) {
+            return res.status(404).send("Error: No user was found");
+        } else {
         res.json(updatedUser);
+        }
     })
     .catch((err) => {
         console.error(err);
@@ -339,9 +340,6 @@ app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { sess
 });
 
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
-    if(req.user.Username !== req.params.Username){
-        return res.status(400).send('Permission denied');
-    }
     Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
         if (!user) {
@@ -357,22 +355,22 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
 });
 
 app.delete('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    if(req.user.Username !== req.params.Username){
-        return res.status(400).send('Permission denied');
-    }
     Users.findOneAndUpdate(
         { Username: req.params.Username },
         { $pull: { FavoriteMovies: req.params.MovieID} },
-        { new: true },
-        (error, updatedUser) => {
-            if (error) {
-                console.error(error);
-                res.status(500).send('Error: ' + error);
+        { new: true }
+    )
+        .then((updatedUser) => {
+            if (!updatedUse) {
+                return res.status(404).send("Error: No user was found");
             } else {
                 res.json(updatedUser);
             }
-        }
-    );
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
 }); 
 
 app.use('/documentation', express.static('public')); 
