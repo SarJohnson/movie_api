@@ -304,14 +304,12 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
         Birthday: req.body.Birthday,
         },
         },
-  { new: true},
-  (err, updatedUser) => {
-    if (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-    } else {
-        res.json(updatedUser);
-    }
+  { new: true}
+    )
+    .then((updatedUser) => res.status(200).json(updatedUser))
+    .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
   });
 });
 
@@ -357,14 +355,12 @@ app.delete('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { se
     await Users.findOneAndUpdate(
         { Username: req.params.Username },
         { $pull: { FavoriteMovies: req.params.MovieID} },
-        { new: true },
-        (error, updatedUser) => {
-            if (error) {
-                console.error(error);
-                res.status(500).send('Error: ' + error);
-            } else {
-                res.json(updatedUser);
-            }
+        { new: true }
+    )
+        .then((updatedUser) => res.status(200).json(updatedUser))
+        .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
         });
 }); 
 
