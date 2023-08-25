@@ -203,6 +203,17 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) 
         });
 });
 
+app.get('/users', passport.authenticate('jwt', { session: false }), function (req, res) {
+    Users.find()
+     .then(function (users) {
+        res.status(201).json(users);
+     })
+     .catch(function (err) {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+     });
+});
+
 app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.findOne({ Title: req.params.Title })
         .then((movie) => {
@@ -235,7 +246,7 @@ app.get('movies/director/:Name', passport.authenticate('jwt', { session: false }
             if (!movie) {
                 return res.status(404).send('Error: ' + req.params.Name + ' was not found');
             } else {
-                res.status(200).json(movie.Name);
+                res.status(200).json(movie.Director);
             }
         })
         .catch((err) => {
@@ -337,9 +348,9 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
     await Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
         if (!user) {
-            res.status(400).send(req.params.Username + 'was not found');
+            res.status(400).send(req.params.Username + ' was not found');
         } else {
-            res.status(200).send(req.params.Username + 'was deleted.');
+            res.status(200).send(req.params.Username + ' was deleted.');
         }
     })
     .catch((err) => {
@@ -364,7 +375,7 @@ app.delete('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { se
         });
 }); 
 
-app.use('/documentation', express.static('public')); 
+app.use(express.static('public')); 
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
