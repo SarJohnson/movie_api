@@ -15,6 +15,7 @@ A horror movie API that allows users to access different horror movies with a de
 -Passport
 ### Links
 Live- https://sarjohnsonmyflix-4f5de10aa490.herokuapp.com
+</br>
 Documentation- https://sarjohnsonmyflix-4f5de10aa490.herokuapp.com/documentation.html
 ### Built With
 -Javascript
