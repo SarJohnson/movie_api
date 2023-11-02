@@ -1,6 +1,6 @@
 # <h1 align="center">Movie API</h1>
  ### Project Description
-A horror movie API that allows users to access different horror movies with a description of the movie, subgenre of horror, and director of said movie.
+A horror movie API that allows users to access different horror movies with a description of the movie, subgenre of horror, director, and watch information of said movie.
 ### Dependencies
 -Mongoose
 </br>
