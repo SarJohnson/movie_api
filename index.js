@@ -11,11 +11,13 @@ const { check, validationResult } = require('express-validator');
 const Movies = Models.Movie;
 const Users = Models.User;
 
+// Uncomment and update the connection URI if not using environment variable
 /* mongoose.connect('mongodb://localhost:27017/cfDB', {
      useNewUrlParser: true, 
      useUnifiedTopology: true
 }); */
 
+// Use the connection URI from environment variable
 mongoose.connect( process.env.CONNECTION_URI, {
      useNewUrlParser: true, 
      useUnifiedTopology: true
@@ -35,10 +37,12 @@ let auth = require('./auth.js')(app);
 const passport = require('passport');
 require('./passport.js');
 
+//welcome message for the API
 app.get('/', (req, res) => {
     res.send('Welcome to my movie app!');
 });
 
+//retrieve a list of all movies
 app.get('/movies', (req, res) => {
     Movies.find()
         .then((movies) => {
@@ -50,6 +54,7 @@ app.get('/movies', (req, res) => {
         });
 });
 
+//retrieve a list of all users
 app.get('/users', passport.authenticate('jwt', { session: false }), function (req, res) {
     Users.find()
      .then(function (users) {
@@ -61,6 +66,7 @@ app.get('/users', passport.authenticate('jwt', { session: false }), function (re
      });
 });
 
+//retrieve information about a specific movie
 app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.findOne({ Title: req.params.Title })
         .then((movie) => {
@@ -72,6 +78,7 @@ app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req
         });
 });
 
+//retrieve the description of a movie subgenre
 app.get('/movies/subgenre/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.findOne({ 'Subgenre.Name': req.params.Name })
         .then((movie) => {
@@ -87,6 +94,7 @@ app.get('/movies/subgenre/:Name', passport.authenticate('jwt', { session: false 
         });
 });
 
+//retrieve information about a movie director
 app.get('movies/director/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.findOne({ 'Director.Name': req.params.Name })
         .then((movie) => {
@@ -102,6 +110,7 @@ app.get('movies/director/:Name', passport.authenticate('jwt', { session: false }
         });
 });
 
+//retrieve information about a specific user
 app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOne({ Username: req.params.Username })
         .then((user) => {
@@ -112,6 +121,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
         });
 });
 
+//register a new user
 app.post('/users', 
 [check('Username', 'Username is required').isLength({min: 5}),
 check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
@@ -148,6 +158,7 @@ check('Email', 'Email does not appear to be valid').isEmail()], async (req, res)
         });
 });
 
+//update user information
 app.put('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if(req.user.Username !== req.params.Username){
         return res.status(400).send('Permission denied');
@@ -171,6 +182,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }), as
   });
 });
 
+//add a movie to a user's list of favorite movies
 app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
     if(req.user.Username !== req.params.Username){
         return res.status(400).send('Permission denied');
@@ -188,6 +200,7 @@ app.post('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { sess
     });
 });
 
+//delete a user
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if(req.user.Username !== req.params.Username){
         return res.status(400).send('Permission denied');
@@ -206,6 +219,7 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
     });
 });
 
+//remove a movie from a user's list of favorite movies
 app.delete('/users/:Username/Movies/:MovieID', passport.authenticate('jwt', { session: false }), async (req, res) => {
     if(req.user.Username !== req.params.Username){
         return res.status(400).send('Permission denied');
@@ -229,6 +243,7 @@ app.use((err, req, res, next) => {
     res.status(500).send('Error');
 });
 
+//start the server
 const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () => {
     console.log('Your app is listening on port ' + port);

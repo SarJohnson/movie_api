@@ -1,7 +1,7 @@
-const passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy,
+const passport = require('passport'), // Authentication middleware for Node.js
+    LocalStrategy = require('passport-local').Strategy, //Passport strategy for authenticating with a username and password
     Models = require('./models.js'),
-    passportJWT = require('passport-jwt');
+    passportJWT = require('passport-jwt'); //Passport strategy for authenticating with a JSON Web Token
 
 let Users = Models.User,
     JWTStrategy = passportJWT.Strategy,
@@ -10,8 +10,8 @@ let Users = Models.User,
 passport.use(
     new LocalStrategy(
         {
-            usernameField: 'Username',
-            passwordField: 'Password',
+            usernameField: 'Username', //The field name for the username in the request 
+            passwordField: 'Password', //The field name for the password in the request
         },
         async (username, password, callback) => {
             console.log(`${username} ${password}`);
@@ -41,8 +41,8 @@ passport.use(
 );
 
 passport.use(new JWTStrategy({
-    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: 'your_jwt_secret'
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(), //Function to extract the JWT from the request
+        secretOrKey: 'your_jwt_secret' //The secret key used to verify the JWT signature
 }, async (jwtPayload, callback) => {
     return await Users.findById(jwtPayload._id)
         .then((user) => {
