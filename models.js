@@ -12,6 +12,8 @@ let movieSchema = mongoose.Schema({
         Name: String,
         Birth: String
     },
+    Watch: {type: String, required: true},
+    Price: {type: String, required: true},
 });
 
 let userSchema = mongoose.Schema({
